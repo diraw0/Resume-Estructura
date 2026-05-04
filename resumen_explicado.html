@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estructura de Datos I – Guía Completa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #f7f4ef;
+    --surface: #ffffff;
+    --card: #f0ece5;
+    --border: #ddd8ce;
+    --u1: #2d6a9f;
+    --u2: #b94a2c;
+    --u3: #2a7a4b;
+    --text: #1a1a1a;
+    --muted: #666;
+    --light-muted: #999;
+    --code-bg: #1e2030;
+    --code-text: #cdd6f4;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15.5px;
+  }
+
+  /* HERO */
+  .hero {
+    background: #1a1a2e;
+    color: white;
+    padding: 48px 32px 40px;
+    text-align: center;
+  }
+  .hero .subtitle {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f0a500;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Lora', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .hero p {
+    color: #aaa;
+    max-width: 540px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1a1a2e;
+    border-bottom: 2px solid #2d2d4e;
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .sticky-nav a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 14px 16px;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    display: block;
+  }
+  .sticky-nav a:hover, .sticky-nav a.u1 { color: #7ab3e0; border-bottom-color: #2d6a9f; }
+  .sticky-nav a.u2 { color: #e8846a; border-bottom-color: #b94a2c; }
+  .sticky-nav a.u3 { color: #6fba8e; border-bottom-color: #2a7a4b; }
+
+  /* LAYOUT */
+  .container { max-width: 860px; margin: 0 auto; padding: 48px 32px; }
+
+  /* UNIT HEADER */
+  .unit { margin-bottom: 64px; }
+  .unit-header {
+    padding: 28px 32px;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+    color: white;
+  }
+  .unit-header.u1 { background: var(--u1); }
+  .unit-header.u2 { background: var(--u2); }
+  .unit-header.u3 { background: var(--u3); }
+  .unit-header .label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .unit-header h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .unit-header p {
+    margin-top: 8px;
+    opacity: 0.85;
+    font-size: 14px;
+    max-width: 560px;
+  }
+
+  /* SECTIONS */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 32px;
+    margin-bottom: 3px;
+  }
+  .section:last-child { border-radius: 0 0 12px 12px; margin-bottom: 0; }
+  .section + .section { border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .u1 .section-label { color: var(--u1); }
+  .u2 .section-label { color: var(--u2); }
+  .u3 .section-label { color: var(--u3); }
+
+  .section h3 {
+    font-family: 'Lora', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    margin-top: 28px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .section h3:first-child { margin-top: 0; }
+
+  .section h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p { margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  strong { font-weight: 700; }
+  em { font-style: italic; color: var(--muted); }
+
+  ul, ol { padding-left: 24px; margin: 10px 0 14px; }
+  li { margin-bottom: 7px; line-height: 1.7; }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: #fffbf0;
+    border: 1px solid #e8d88a;
+    border-left: 4px solid #f0a500;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  .analogy .analogy-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #c47d00;
+    margin-bottom: 6px;
+  }
+
+  /* DEFINITION BOX */
+  .definition {
+    background: #f0f6ff;
+    border: 1px solid #b8d0ef;
+    border-left: 4px solid var(--u1);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  .definition .def-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--u1);
+    margin-bottom: 6px;
+  }
+  .u2 .definition { border-left-color: var(--u2); background: #fff5f3; border-color: #f5c4b8; }
+  .u2 .definition .def-tag { color: var(--u2); }
+  .u3 .definition { border-left-color: var(--u3); background: #f0fff5; border-color: #b8e4c8; }
+  .u3 .definition .def-tag { color: var(--u3); }
+
+  /* WARNING / KEY */
+  .key {
+    background: #f0fff5;
+    border: 1px solid #a8ddb8;
+    border-left: 4px solid var(--u3);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  .key .key-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--u3);
+    margin-bottom: 6px;
+  }
+
+  .warn {
+    background: #fff5f3;
+    border: 1px solid #f5c4b8;
+    border-left: 4px solid var(--u2);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  .warn .warn-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--u2);
+    margin-bottom: 6px;
+  }
+
+  /* CODE */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .codeblock {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 20px 22px;
+    font-size: 13px;
+    line-height: 1.9;
+    overflow-x: auto;
+    margin: 16px 0;
+    position: relative;
+  }
+  .codeblock .code-label {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .kw { color: #cba6f7; } /* keyword */
+  .fn { color: #89b4fa; } /* function */
+  .cm { color: #585b70; font-style: italic; } /* comment */
+  .nm { color: #fab387; } /* number/name */
+  .op { color: #89dceb; } /* operator */
+  .str { color: #a6e3a1; } /* string */
+
+  .inline-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: #e8e4dc;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #333;
+  }
+
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  @media(max-width:620px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .box h4 { font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+  .box.blue h4 { color: var(--u1); }
+  .box.red h4 { color: var(--u2); }
+  .box.green h4 { color: var(--u3); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--card); font-weight: 700; text-align: left; padding: 10px 14px; border: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: top; line-height: 1.6; }
+  tr:nth-child(even) td { background: var(--card); }
+
+  /* VISUAL DIAGRAM */
+  .diagram {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+  }
+  .diagram .d-label { font-size: 11px; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .step {
+    counter-increment: step-counter;
+    position: relative;
+    padding-left: 36px;
+    margin-bottom: 14px;
+  }
+  .step::before {
+    content: counter(step-counter);
+    position: absolute; left: 0; top: 1px;
+    width: 24px; height: 24px;
+    background: var(--u1);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .steps { counter-reset: step-counter; margin: 14px 0; }
+  .u2 .step::before { background: var(--u2); }
+  .u3 .step::before { background: var(--u3); }
+
+  /* SEPARATOR */
+  .sep { height: 1px; background: var(--border); margin: 28px 0; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 40px; color: var(--light-muted); font-size: 13px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="subtitle">Guía desde cero · Estructura de Datos I</div>
+  <h1>Entendé antes de memorizar</h1>
+  <p>Cada concepto explicado con analogías y ejemplos concretos. Unidades I, II y III cubiertas completamente.</p>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#u1" class="u1">📦 Unidad 1: Arreglos</a>
+  <a href="#u2" class="u2">📚 Unidad 2: Pilas y Colas</a>
+  <a href="#u3" class="u3">🔗 Unidad 3: Listas Encadenadas</a>
+  <a href="#final" style="color:#aaa">🎯 Resumen final</a>
+</nav>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════
+     UNIDAD 1
+══════════════════════════════════════════════ -->
+<div class="unit u1" id="u1">
+  <div class="unit-header u1">
+    <div class="label">Unidad 1</div>
+    <h2>Algoritmos &amp; Arreglos</h2>
+    <p>Cómo se organizan los datos en memoria cuando el tamaño es fijo y conocido de antemano.</p>
+  </div>
+
+  <!-- ALGORITMOS -->
+  <div class="section">
+    <div class="section-label">¿Qué es un algoritmo?</div>
+
+    <h3>La idea fundamental</h3>
+    <p>Antes de hablar de estructuras de datos, hay que entender qué es un <strong>algoritmo</strong>. La materia se llama "Estructura de Datos" pero en realidad estudia el binomio indisoluble <strong>datos + algoritmos</strong>: cómo guardás la información y cómo operás sobre ella.</p>
+
+    <div class="definition">
+      <div class="def-tag">Definición</div>
+      Un <strong>algoritmo</strong> es un conjunto de instrucciones <em>finito</em>, <em>no ambiguo</em> y <em>general</em> que resuelve un problema. Tiene cero o más entradas y produce una o más salidas. Si la solución no existe, el algoritmo debe informarlo — no puede quedarse colgado para siempre.
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Una receta de cocina es un algoritmo. Tiene ingredientes de entrada (datos), pasos definidos y sin ambigüedad ("añadir sal al gusto" sería mala especificación), y produce un plato al final. Si falta un ingrediente clave, la receta debe avisarte — no decirte que improvises.
+    </div>
+
+    <h3>Etapas para resolver un problema con la computadora</h3>
+    <p>La materia enfatiza que programar no es directamente sentarse a escribir código. El proceso tiene estas etapas:</p>
+    <div class="steps">
+      <div class="step"><strong>Análisis</strong> — entender qué hay que resolver, definir entradas y salidas esperadas.</div>
+      <div class="step"><strong>Diseño</strong> — escribir el algoritmo en pseudocódigo, diagramas de flujo o lenguaje natural.</div>
+      <div class="step"><strong>Prueba de escritorio</strong> — simular a mano el algoritmo con datos de prueba para verificar que funciona.</div>
+      <div class="step"><strong>Codificación</strong> — traducir el algoritmo a un lenguaje de programación real.</div>
+      <div class="step"><strong>Compilación y ejecución</strong> — convertir el código a ejecutable y correrlo.</div>
+      <div class="step"><strong>Depuración</strong> — corregir errores encontrados.</div>
+      <div class="step"><strong>Evaluación</strong> — verificar que los resultados son correctos y el programa es eficiente.</div>
+    </div>
+
+    <h3>Pseudocódigo</h3>
+    <p>Es el lenguaje que usa la materia para escribir algoritmos. No es un lenguaje de programación real, es una forma de escribir lógica en español estructurado. Las instrucciones clave son:</p>
+    <div class="grid-2">
+      <div class="box blue"><h4>Instrucciones básicas</h4>
+        <code>Leer x</code> — pide un valor al usuario<br><br>
+        <code>Escribir x</code> — muestra un valor<br><br>
+        <code>x = valor</code> — asignación
+      </div>
+      <div class="box blue"><h4>Control de flujo</h4>
+        <code>Si condición entonces ... finSi</code><br><br>
+        <code>Mientras condición hacer ... finMientras</code><br><br>
+        <code>Desde i=1 hasta n ... finDesde</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATOS -->
+  <div class="section">
+    <div class="section-label">Terminología de Datos</div>
+
+    <h3>¿Qué es un dato, un tipo de dato y una estructura de datos?</h3>
+    <p>Estos tres conceptos se confunden mucho. Son distintos niveles de abstracción:</p>
+
+    <div class="definition">
+      <div class="def-tag">Dato</div>
+      La unidad mínima de información. Un número, una letra, un valor lógico. Solo existe, no tiene relación con otros.
+    </div>
+
+    <div class="definition">
+      <div class="def-tag">Tipo de dato</div>
+      Define el <strong>conjunto de valores posibles</strong> que puede tomar una variable y las operaciones válidas sobre esos valores. Por ejemplo: el tipo "entero" abarca {…, -2, -1, 0, 1, 2, …} y permite suma, resta, multiplicación. El tipo "carácter" abarca letras y no permite suma numérica.
+    </div>
+
+    <div class="definition">
+      <div class="def-tag">Estructura de datos</div>
+      Una forma de <strong>organizar y relacionar</strong> varios datos en memoria para que se puedan operar eficientemente. No es solo guardar datos — es cómo se relacionan entre sí y qué operaciones tiene sentido hacer. Un arreglo es una estructura. Una lista, una pila, un árbol — también.
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Un <em>dato</em> es un libro individual. El <em>tipo de dato</em> dice qué tipo de libro es (novela, técnico, etc.). La <em>estructura de datos</em> es cómo organizás la biblioteca: por orden alfabético, por estante temático, o con una lista de espera. La organización determina qué tan rápido encontrás un libro.
+    </div>
+  </div>
+
+  <!-- ARREGLOS -->
+  <div class="section">
+    <div class="section-label">Arreglos</div>
+
+    <h3>¿Qué es un arreglo?</h3>
+    <p>Un arreglo (array) es la estructura de datos más básica. Formalmente es un conjunto de pares <strong>(índice, valor)</strong>. Informalmente: una fila de cajitas numeradas en memoria, cada una guarda un valor del mismo tipo.</p>
+
+    <div class="diagram">
+      <div class="d-label">Arreglo A de 6 elementos</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">15</td>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">3</td>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">42</td>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">8</td>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">19</td>
+          <td style="border:2px solid #888; padding:10px 16px; background:#e8f0fe; font-weight:700">7</td>
+        </tr>
+        <tr>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(1)</td>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(2)</td>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(3)</td>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(4)</td>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(5)</td>
+          <td style="border:none; text-align:center; color:#666; font-size:12px">A(6)</td>
+        </tr>
+      </table>
+    </div>
+
+    <p>La característica clave de los arreglos es que son <strong>estáticos</strong>: su tamaño se define cuando se escribe el programa y no puede cambiar mientras el programa corre. Si declarás un arreglo de 100 elementos, ocupa espacio para 100 aunque solo uses 10.</p>
+
+    <h3>Representación en memoria — ¿Cómo se guarda físicamente?</h3>
+    <p>En la memoria de la computadora todo es una secuencia lineal de posiciones. Los arreglos se guardan de forma <strong>contigua</strong> — un elemento tras otro, sin saltos.</p>
+    <p>Para arreglos de <strong>una dimensión</strong>, si el arreglo empieza en la dirección <span class="inline-code">α</span>:</p>
+
+    <div class="codeblock"><span class="cm">// dirección del elemento A(i):</span>
+dirección(A(i)) = α + (i - 1)
+
+<span class="cm">// Ejemplo: si α = 1000 y cada elemento ocupa 1 posición,
+// A(1) está en 1000, A(3) está en 1002, A(7) está en 1006</span></div>
+
+    <p>Para arreglos de <strong>dos dimensiones</strong> (matrices), la forma estándar es <strong>fila mayor</strong>: se guarda la fila 1 completa, luego la fila 2 completa, etc.</p>
+
+    <div class="codeblock"><span class="cm">// Para A(1:u₁, 1:u₂) — u₁ filas, u₂ columnas
+// dirección de A(i, j):</span>
+dirección(A(i,j)) = α + (i-1)*u₂ + (j-1)
+
+<span class="cm">// Cantidad total de elementos:</span>
+elementos = (u₁ - l₁ + 1) × (u₂ - l₂ + 1)</div>
+
+    <div class="key">
+      <div class="key-tag">Para el examen</div>
+      Si te preguntan cuántos elementos tiene <span class="inline-code">A(2:5, 1:4)</span>: filas = (5-2+1) = 4, columnas = (4-1+1) = 4, total = 16 elementos.
+    </div>
+  </div>
+
+  <!-- LISTAS ORDENADAS -->
+  <div class="section">
+    <div class="section-label">Listas Ordenadas</div>
+
+    <h3>¿Qué es una lista ordenada?</h3>
+    <p>Una lista ordenada es una secuencia (a₁, a₂, ..., aₙ) donde la única relación entre los elementos es la <strong>precedencia</strong>: cada elemento sabe quién está antes y quién está después. No hay otro criterio de organización implícito (aunque se puede ordenar por valor).</p>
+    <p>Se implementa en un arreglo donde el orden importa. Las operaciones posibles son: recorrer, buscar, insertar, borrar, ordenar, mezclar.</p>
+
+    <h3>Insertar manteniendo el orden</h3>
+    <p>Este es el algoritmo más pedido en la unidad. El problema es: tenés una lista ya ordenada de n elementos en un arreglo, y querés agregar el elemento <span class="inline-code">x</span> en la posición correcta, <em>desplazando</em> los elementos mayores para hacer lugar.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Tenés una fila de cartas ordenadas boca abajo sobre la mesa. Sacás una carta nueva y la querés poner en su lugar. ¿Qué hacés? Empezás por el final de la fila, y vas corriendo cada carta hacia adelante mientras sean más grandes que la tuya. Cuando encontrás una más chica (o llegaste al principio), ponés tu carta ahí.
+    </div>
+
+    <div class="codeblock"><span class="cm">// PROC AGREGAR(L, x) — inserta x en lista L de n elementos manteniendo orden</span>
+<span class="kw">i</span> = n + 1                        <span class="cm">// empezamos desde la posición siguiente al último</span>
+
+<span class="kw">Mientras</span> i > 1 <span class="kw">y</span> L(i-1) > x <span class="kw">hacer</span>
+    L(i) = L(i-1)              <span class="cm">// corremos el elemento una posición hacia adelante</span>
+    i = i - 1                  <span class="cm">// retrocedemos</span>
+<span class="kw">finMientras</span>
+
+L(i) = x                       <span class="cm">// insertamos x en el hueco que quedó</span></div>
+
+    <p>Ejemplo: Lista = [1, 3, 7, 9], queremos insertar 5.</p>
+    <ul>
+      <li>i=5: L(4)=9 &gt; 5 → L(5)=9, i=4</li>
+      <li>i=4: L(3)=7 &gt; 5 → L(4)=7, i=3</li>
+      <li>i=3: L(2)=3 &lt; 5 → salimos del while</li>
+      <li>L(3) = 5 → Lista queda = [1, 3, 5, 7, 9] ✓</li>
+    </ul>
+  </div>
+
+  <!-- POLINOMIOS -->
+  <div class="section">
+    <div class="section-label">Suma de Polinomios con Arreglos</div>
+
+    <h3>¿Por qué representar polinomios en un arreglo?</h3>
+    <p>Un polinomio como <strong>P(x) = 3x⁵ - 2x² + 7</strong> tiene términos con coeficiente y exponente. Si lo guardamos de forma naive necesitaríamos guardar el coeficiente de cada exponente posible — para P(x) = x¹⁰⁰⁰ + 1 necesitaríamos 1001 posiciones aunque solo 2 sean distintas de cero.</p>
+    <p>La solución: guardar solo los <strong>términos no nulos</strong> en el formato:</p>
+
+    <div class="definition">
+      <div class="def-tag">Formato del polinomio</div>
+      <span class="inline-code">(m, eₘ, bₘ, eₘ₋₁, bₘ₋₁, ..., e₁, b₁, e₀, b₀)</span><br><br>
+      Donde: <strong>m</strong> = cantidad de términos con coeficiente ≠ 0, <strong>eᵢ</strong> = exponente del término i, <strong>bᵢ</strong> = coeficiente del término i. Los exponentes van en <em>orden decreciente</em>.
+    </div>
+
+    <p><strong>Ejemplo:</strong> P(x) = x⁴ - 10x³ + 3x² + 1</p>
+    <div class="diagram">
+      <div class="d-label">Representación en arreglo</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="border:2px solid #888; padding:8px 14px; background:#e8f0fe; font-weight:700">4</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#fff3cd; font-weight:700">4</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#d4edda; font-weight:700">1</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#fff3cd; font-weight:700">3</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#d4edda; font-weight:700">-10</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#fff3cd; font-weight:700">2</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#d4edda; font-weight:700">3</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#fff3cd; font-weight:700">0</td>
+          <td style="border:2px solid #888; padding:8px 14px; background:#d4edda; font-weight:700">1</td>
+        </tr>
+        <tr>
+          <td style="border:none; text-align:center; color:#2d6a9f; font-size:11px">m=4</td>
+          <td style="border:none; text-align:center; color:#b07d00; font-size:11px">exp</td>
+          <td style="border:none; text-align:center; color:#2a7a4b; font-size:11px">coef</td>
+          <td style="border:none; text-align:center; color:#b07d00; font-size:11px">exp</td>
+          <td style="border:none; text-align:center; color:#2a7a4b; font-size:11px">coef</td>
+          <td style="border:none; text-align:center; color:#b07d00; font-size:11px">exp</td>
+          <td style="border:none; text-align:center; color:#2a7a4b; font-size:11px">coef</td>
+          <td style="border:none; text-align:center; color:#b07d00; font-size:11px">exp</td>
+          <td style="border:none; text-align:center; color:#2a7a4b; font-size:11px">coef</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Algoritmo SUMPOL — Lógica explicada</h3>
+    <p>Tenemos dos polinomios A y B guardados así, y queremos sumarlos para obtener C. Usamos punteros <strong>p</strong> (recorre A) y <strong>q</strong> (recorre B), comenzando en la posición 2 (saltamos el m inicial).</p>
+    <p>Comparamos los exponentes actuales de A y B. Hay tres casos posibles:</p>
+
+    <div class="grid-2">
+      <div class="box green"><h4>Caso 1: A(p) = B(q) — exponentes iguales</h4>
+        Sumamos los coeficientes. Si la suma da 0, no se agrega al resultado (término nulo). Si es distinto de cero, se agrega con ese exponente. Avanzamos <strong>p y q</strong>.
+      </div>
+      <div class="box blue"><h4>Caso 2: A(p) &gt; B(q) — exp de A es mayor</h4>
+        El término de A va primero en C (va de mayor a menor exponente). Copiamos el término de A a C. Avanzamos solo <strong>p</strong>.
+      </div>
+    </div>
+    <div class="box" style="margin-top:12px; border-color: var(--border)"><h4 style="color:var(--u2)">Caso 3: A(p) &lt; B(q) — exp de B es mayor</h4>
+      El término de B va primero. Copiamos el término de B a C. Avanzamos solo <strong>q</strong>. Al terminar el bucle, copiamos los términos restantes del que sobró.
+    </div>
+  </div>
+
+  <!-- MATRICES SPARSE -->
+  <div class="section">
+    <div class="section-label">Matrices Sparse (Ralas)</div>
+
+    <h3>¿Qué es una matriz sparse?</h3>
+    <p>Es una matriz donde la <strong>gran mayoría de sus elementos son cero</strong>. Si tenés una matriz de 100×100 = 10.000 elementos pero solo 50 son distintos de cero, guardarla completa sería un enorme desperdicio de memoria.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Imaginá un estadio de fútbol con 50.000 asientos. Si en un entrenamiento solo van 40 personas, sería ridículo llevar un registro de todos los asientos vacíos. Mucho mejor llevar una lista de las 40 personas presentes anotando en qué fila y asiento está cada una.
+    </div>
+
+    <h3>Representación compacta como lista de 3-uplas</h3>
+    <p>En vez de guardar toda la matriz, guardamos solo los elementos distintos de cero como tuplas <strong>(fila, columna, valor)</strong>, en una nueva matriz M donde:</p>
+    <ul>
+      <li><strong>M(0, 1)</strong> = cantidad de filas de la matriz original</li>
+      <li><strong>M(0, 2)</strong> = cantidad de columnas de la matriz original</li>
+      <li><strong>M(0, 3)</strong> = cantidad de elementos distintos de cero</li>
+      <li><strong>M(k, 1..3)</strong> = fila, columna, valor del k-ésimo elemento no nulo</li>
+    </ul>
+    <p>Las tuplas se guardan ordenadas por fila, y dentro de cada fila por columna.</p>
+
+    <div class="warn">
+      <div class="warn-tag">Importante</div>
+      La transpuesta de una matriz sparse se obtiene intercambiando columna y fila en cada 3-upla y reordenando. Esto puede caer en el examen.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     UNIDAD 2
+══════════════════════════════════════════════ -->
+<div class="unit u2" id="u2">
+  <div class="unit-header u2">
+    <div class="label">Unidad 2</div>
+    <h2>Pilas y Colas</h2>
+    <p>Estructuras lineales donde el orden de entrada y salida de los datos está controlado.</p>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section">
+    <div class="section-label">La idea detrás de pilas y colas</div>
+
+    <h3>¿Por qué no usar siempre arreglos directos?</h3>
+    <p>Los arreglos te dan acceso a cualquier posición. Pero hay problemas donde <strong>el orden de acceso importa</strong> y querés restringirlo para reflejar la realidad del problema. Ahí entran Pilas y Colas: son arreglos con reglas de acceso muy específicas.</p>
+
+    <div class="grid-2">
+      <div class="box red">
+        <h4>Pila — LIFO</h4>
+        <em>Last In, First Out</em><br>
+        El último en entrar es el primero en salir. Como una pila de platos: siempre sacás del tope.
+      </div>
+      <div class="box red">
+        <h4>Cola — FIFO</h4>
+        <em>First In, First Out</em><br>
+        El primero en entrar es el primero en salir. Como la fila del banco: el que llegó primero es el primero en ser atendido.
+      </div>
+    </div>
+  </div>
+
+  <!-- PILA -->
+  <div class="section">
+    <div class="section-label">PILA (Stack)</div>
+
+    <h3>Concepto y variables</h3>
+    <p>Una pila es una colección de datos accesible <strong>solo por un extremo</strong>, llamado <em>tope</em>. Podés agregar (push) y sacar (pop) únicamente desde el tope. El resto de los elementos están "tapados" y son inaccesibles hasta que sacás los de arriba.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Una pila de bandejas en un buffet. Siempre agarrás la bandeja de arriba. Siempre devolvés la bandeja sobre la pila. Si querés la bandeja del fondo, tenés que sacar todas las de arriba primero.
+    </div>
+
+    <p>Para implementar una pila en un arreglo necesitás:</p>
+    <ul>
+      <li><strong>S(1:n)</strong> — el arreglo que guarda los elementos</li>
+      <li><strong>n</strong> — capacidad máxima de la pila</li>
+      <li><strong>tope</strong> — índice del último elemento insertado. Empieza en 0 (pila vacía). Si tope = n, está llena.</li>
+    </ul>
+
+    <div class="diagram">
+      <div class="d-label">Estado de la pila después de agregar A, B, C</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="width:40px; text-align:right; color:#888; font-size:12px; padding-right:8px">tope →</td>
+          <td style="border:2px solid #888; padding:10px 20px; background:#fce8e6; font-weight:700">C</td>
+          <td style="padding-left:8px; color:#888; font-size:12px">S(3) ← último en entrar, primero en salir</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td style="border:2px solid #888; padding:10px 20px; background:#ffeee6">B</td>
+          <td style="padding-left:8px; color:#888; font-size:12px">S(2)</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td style="border:2px solid #888; padding:10px 20px; background:#fff3e6">A</td>
+          <td style="padding-left:8px; color:#888; font-size:12px">S(1) ← primero en entrar, último en salir</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Procedimiento AGREGAR (Push)</h3>
+    <p>Antes de agregar, verificamos que la pila no esté llena. Si hay lugar, subimos el tope y ponemos el elemento.</p>
+    <div class="codeblock"><span class="fn">PROC AGREGAR</span>(x, S, n, tope)
+    <span class="kw">si</span> tope = n <span class="kw">entonces</span>          <span class="cm">// está llena — no podemos agregar más</span>
+        llamar LLENA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    tope = tope + 1             <span class="cm">// subimos el tope</span>
+    S(tope) = x                 <span class="cm">// guardamos el elemento en la nueva posición</span>
+<span class="fn">finProc</span></div>
+
+    <h3>Procedimiento ELIMINAR (Pop)</h3>
+    <p>Antes de eliminar, verificamos que la pila no esté vacía. Si tiene elementos, tomamos el del tope y bajamos el tope.</p>
+    <div class="codeblock"><span class="fn">PROC ELIMINAR</span>(x, S, tope)
+    <span class="kw">si</span> tope &lt;= 0 <span class="kw">entonces</span>         <span class="cm">// está vacía — no hay nada para sacar</span>
+        llamar VACIA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    x = S(tope)                 <span class="cm">// guardamos el elemento en x para devolverlo</span>
+    tope = tope - 1             <span class="cm">// bajamos el tope (el elemento "ya no está")</span>
+<span class="fn">finProc</span></div>
+
+    <div class="warn">
+      <div class="warn-tag">Errores clásicos</div>
+      <strong>Overflow (desbordamiento):</strong> intentar agregar cuando tope = n. <strong>Underflow:</strong> intentar sacar cuando tope = 0. Ambos llaman a sus procedimientos de error respectivos.
+    </div>
+
+    <h3>¿Para qué sirven las pilas en la práctica?</h3>
+    <ul>
+      <li><strong>Llamadas a funciones/subprogramas:</strong> cuando llamás a una función, el estado actual del programa (variables, dirección de retorno) se guarda en una pila. Al terminar la función, se recupera ese estado y el programa sigue desde donde estaba.</li>
+      <li><strong>Recursividad:</strong> cada llamada recursiva apila su estado. Cuando se llega al caso base, se desapila de vuelta.</li>
+      <li><strong>Evaluación de expresiones aritméticas:</strong> para convertir y evaluar expresiones matemáticas (tema que veremos pronto).</li>
+    </ul>
+  </div>
+
+  <!-- COLA -->
+  <div class="section">
+    <div class="section-label">COLA (Queue)</div>
+
+    <h3>Concepto y variables</h3>
+    <p>Una cola es una estructura donde los elementos <strong>entran por un extremo (REAR / final)</strong> y <strong>salen por el otro (FRONT / frente)</strong>. Es exactamente como la fila del supermercado.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      La fila de atención al cliente. Llegás y te ponés al final (rear). El que es atendido es el que está al frente (front). Nadie puede "colarse" en el medio.
+    </div>
+
+    <p>Variables necesarias:</p>
+    <ul>
+      <li><strong>q(1:n)</strong> — arreglo que guarda los elementos</li>
+      <li><strong>front</strong> — índice del primer elemento (el próximo a salir). Inicialmente = 0.</li>
+      <li><strong>rear</strong> — índice del último elemento (el último en entrar). Inicialmente = 0.</li>
+      <li>Cola vacía: <strong>front = rear</strong></li>
+    </ul>
+
+    <div class="codeblock"><span class="fn">PROC AGREGAR</span>(x, q, n, rear)
+    <span class="kw">si</span> rear = n <span class="kw">entonces</span>           <span class="cm">// no hay espacio al final</span>
+        llamar LLENA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    rear = rear + 1
+    q(rear) = x
+<span class="fn">finProc</span>
+
+<span class="fn">PROC ELIMINAR</span>(x, q, n, front, rear)
+    <span class="kw">si</span> front = rear <span class="kw">entonces</span>       <span class="cm">// vacía</span>
+        llamar VACIA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    front = front + 1
+    x = q(front)
+<span class="fn">finProc</span></div>
+
+    <h3>El problema de la cola simple en arreglo</h3>
+    <p>Hay un problema grave con esta implementación: cuando sacás elementos, <strong>front avanza pero ese espacio jamás se reutiliza</strong>. Si agregás y sacás muchos elementos, rear llega al final del arreglo y el sistema dice "está lleno" aunque haya montones de espacios libres al principio.</p>
+
+    <div class="diagram">
+      <div class="d-label">La cola "llena" aunque hay espacio libre al inicio</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="border:2px solid #ccc; padding:8px 14px; background:#eee; color:#999">vacío</td>
+          <td style="border:2px solid #ccc; padding:8px 14px; background:#eee; color:#999">vacío</td>
+          <td style="border:2px solid #ccc; padding:8px 14px; background:#fce8e6; font-weight:700">X</td>
+          <td style="border:2px solid #ccc; padding:8px 14px; background:#fce8e6; font-weight:700">Y</td>
+          <td style="border:2px solid #ccc; padding:8px 14px; background:#fce8e6; font-weight:700">Z</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="border:none; text-align:center; color:#999; font-size:12px">espacios libres inutilizables</td>
+          <td style="border:none; text-align:center; color:#b94a2c; font-size:12px">front=3</td>
+          <td style="border:none; text-align:center; font-size:12px"></td>
+          <td style="border:none; text-align:center; color:#b94a2c; font-size:12px">rear=5=n → "LLENA"</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Solución: Cola Circular</h3>
+    <p>La idea es tratar el arreglo como si fuera un <strong>círculo</strong>: cuando llegás al final, el siguiente lugar es el principio. Esto se logra con la operación <strong>módulo (mod)</strong>.</p>
+    <p>Con una cola circular de n posiciones, la capacidad real es <strong>n-1</strong> (se deja una posición libre para poder distinguir entre cola llena y cola vacía).</p>
+
+    <div class="codeblock"><span class="fn">PROC AGREGAR CIRCULAR</span>(x, Q, n, front, rear)
+    rear = (rear + 1) <span class="kw">mod</span> n       <span class="cm">// avanzamos rear con módulo (da la vuelta)</span>
+    <span class="kw">si</span> front = rear <span class="kw">entonces</span>       <span class="cm">// si después de avanzar rear alcanza a front → llena</span>
+        llamar LLENA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    Q(rear) = x
+<span class="fn">finProc</span>
+
+<span class="fn">PROC ELIMINAR CIRCULAR</span>(x, Q, n, front, rear)
+    <span class="kw">si</span> front = rear <span class="kw">entonces</span>       <span class="cm">// vacía</span>
+        llamar VACIA
+        <span class="kw">retornar</span>
+    <span class="kw">finSi</span>
+    front = (front + 1) <span class="kw">mod</span> n
+    x = Q(front)
+<span class="fn">finProc</span></div>
+
+    <div class="key">
+      <div class="key-tag">Cómo funciona el mod</div>
+      Si n=6 y rear=5, (5+1) mod 6 = 0. Si rear=0, (0+1) mod 6 = 1. Así el índice "da la vuelta" al llegar al final del arreglo. El rango válido es 0 a n-1.
+    </div>
+  </div>
+
+  <!-- EXPRESIONES ARITMETICAS -->
+  <div class="section">
+    <div class="section-label">Evaluación de Expresiones Aritméticas</div>
+
+    <h3>¿Por qué existe la notación postfija?</h3>
+    <p>Cuando vos escribís <strong>3 + 4 × 2</strong>, sabés que hay que hacer primero la multiplicación por las reglas de precedencia. Pero una computadora procesa de izquierda a derecha sin "visión hacia adelante". La <strong>notación postfija</strong> (también llamada <em>notación sufija o polaca inversa</em>) reordena los operadores para que una computadora pueda evaluar la expresión de izquierda a derecha sin necesitar precedencia ni paréntesis.</p>
+
+    <div class="grid-2">
+      <div class="box red"><h4>Infija (como la escribimos nosotros)</h4>
+        El operador va ENTRE los operandos.<br>
+        <code style="display:block;background:#333;color:#ccc;padding:8px;border-radius:4px;margin-top:8px;font-size:13px">A + B × C</code>
+        Necesita reglas de precedencia para evaluarse.
+      </div>
+      <div class="box red"><h4>Postfija (como la procesa la PC)</h4>
+        El operador va DESPUÉS de sus operandos.<br>
+        <code style="display:block;background:#333;color:#ccc;padding:8px;border-radius:4px;margin-top:8px;font-size:13px">A B C × +</code>
+        Se evalúa siempre de izquierda a derecha.
+      </div>
+    </div>
+
+    <h3>Tabla de Prioridades — ¡Esta hay que sabérsela!</h3>
+    <p>Para convertir de infija a postfija, usamos una pila y una tabla que asigna dos prioridades a cada operador: <strong>PP (Prioridad en Pila)</strong> y <strong>PE (Prioridad en Expresión)</strong>.</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Símbolo</th><th>PP (en pila)</th><th>PE (en expresión)</th><th>¿Por qué?</th></tr>
+        <tr><td><strong>fin (∅)</strong></td><td>-1</td><td>-1</td><td>Nunca desplaza nada, siempre para el proceso</td></tr>
+        <tr><td><strong>^</strong> (potencia)</td><td>3</td><td>4</td><td>PE &gt; PP → un nuevo ^ no es desplazado por el ^ en pila (asocia a derecha)</td></tr>
+        <tr><td><strong>* /</strong></td><td>2</td><td>2</td><td>Prioridad media, asocia a izquierda</td></tr>
+        <tr><td><strong>+ -</strong></td><td>1</td><td>1</td><td>Prioridad baja, asocia a izquierda</td></tr>
+        <tr><td><strong>(</strong></td><td>0</td><td>4</td><td>En pila nunca desplaza nada. En expresión frena todo.</td></tr>
+        <tr><td><strong>)</strong></td><td>—</td><td>—</td><td>No va a la pila. Provoca vaciado hasta encontrar (</td></tr>
+      </table>
+    </div>
+
+    <h3>PROC.POSFIJO — Reglas paso a paso</h3>
+    <p>Se inicializa la pila con el símbolo <span class="inline-code">∅</span> (fin) en la posición 1. Luego se lee token por token de la expresión:</p>
+
+    <div class="steps u2">
+      <div class="step"><strong>Si el token es un operando</strong> (A, B, x, 3, etc.) → se <em>imprime directamente</em>. Los operandos nunca van a la pila.</div>
+      <div class="step"><strong>Si el token es ")"</strong> → se saca e imprime todo de la pila hasta encontrar "(" — el paréntesis de apertura se descarta sin imprimir.</div>
+      <div class="step"><strong>Si el token es fin (∅)</strong> → se vacía toda la pila imprimiendo todo lo que queda.</div>
+      <div class="step"><strong>Si el token es un operador</strong> (+, -, *, /, ^) → mientras PP del tope de la pila ≥ PE del operador entrante, sacar e imprimir el tope. Luego meter el nuevo operador en la pila.</div>
+    </div>
+
+    <div class="key">
+      <div class="key-tag">La llave del algoritmo</div>
+      La comparación PP(tope) ≥ PE(nuevo) determina si el operador en pila "tiene más o igual derecho" de salir antes que el nuevo. Si sí, sale. Si no, el nuevo entra. Esto implementa la precedencia automáticamente.
+    </div>
+
+    <h3>Ejemplo completo: A / B ^ C + D * E - A * C</h3>
+    <div class="codeblock"><span class="cm">// Resultado postfijo paso a paso:</span>
+Token: A → imprime A                     <span class="str">Salida: A</span>
+Token: / → PP(∅)=-1 &lt; PE(/)=2 → apila   <span class="str">Pila: [∅, /]</span>
+Token: B → imprime B                     <span class="str">Salida: A B</span>
+Token: ^ → PP(/)=2 &lt; PE(^)=4 → apila   <span class="str">Pila: [∅, /, ^]</span>
+Token: C → imprime C                     <span class="str">Salida: A B C</span>
+Token: + → PP(^)=3 ≥ PE(+)=1 → saca ^  <span class="str">Salida: A B C ^</span>
+         → PP(/)=2 ≥ PE(+)=1 → saca /  <span class="str">Salida: A B C ^ /</span>
+         → PP(∅)=-1 &lt; PE(+)=1 → apila  <span class="str">Pila: [∅, +]</span>
+Token: D → imprime D                     <span class="str">Salida: A B C ^ / D</span>
+Token: * → PP(+)=1 &lt; PE(*)=2 → apila   <span class="str">Pila: [∅, +, *]</span>
+Token: E → imprime E                     <span class="str">Salida: A B C ^ / D E</span>
+Token: - → PP(*)=2 ≥ PE(-)=1 → saca *  <span class="str">Salida: A B C ^ / D E *</span>
+         → PP(+)=1 ≥ PE(-)=1 → saca +  <span class="str">Salida: A B C ^ / D E * +</span>
+         → PP(∅)=-1 &lt; PE(-)=1 → apila  <span class="str">Pila: [∅, -]</span>
+Token: A → imprime A                     <span class="str">Salida: A B C ^ / D E * + A</span>
+Token: * → PP(-)=1 &lt; PE(*)=2 → apila   <span class="str">Pila: [∅, -, *]</span>
+Token: C → imprime C                     <span class="str">Salida: A B C ^ / D E * + A C</span>
+Token: ∅ → vaciamos todo la pila         <span class="str">Salida: A B C ^ / D E * + A C * -</span></div>
+
+    <h3>PROC.EVAL — Evaluar expresión postfija</h3>
+    <p>Una vez en postfijo, evaluar es simple. Se recorre la expresión y:</p>
+    <ul>
+      <li>Si es <strong>operando</strong> → se apila</li>
+      <li>Si es <strong>operador</strong> → se sacan los 2 últimos operandos de la pila, se opera, y el resultado se apila</li>
+      <li>Cuando llega el <strong>fin</strong>, el único elemento en la pila es el resultado</li>
+    </ul>
+    <div class="codeblock"><span class="fn">PROC EVAL</span>(E)
+    tope = 0
+    <span class="kw">Repetir</span>
+        x = NEXT-TOKEN(E)
+        <span class="kw">si</span> x = fin: <span class="kw">retornar</span> S(tope)     <span class="cm">// resultado final</span>
+        <span class="kw">si</span> x = operando: AGREGAR(x, S, n, tope)
+        <span class="kw">sino</span>:
+            b = S(tope), tope--         <span class="cm">// segundo operando</span>
+            a = S(tope), tope--         <span class="cm">// primer operando</span>
+            resultado = a <span class="op">op</span> b         <span class="cm">// aplicar operador x</span>
+            AGREGAR(resultado, S, n, tope)
+    <span class="kw">finRepetir</span>
+<span class="fn">finProc</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     UNIDAD 3
+══════════════════════════════════════════════ -->
+<div class="unit u3" id="u3">
+  <div class="unit-header u3">
+    <div class="label">Unidad 3</div>
+    <h2>Listas Encadenadas</h2>
+    <p>Estructuras dinámicas donde los datos pueden estar en cualquier lugar de la memoria, conectados mediante punteros.</p>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section">
+    <div class="section-label">El problema con los arreglos</div>
+
+    <h3>¿Por qué necesitamos algo distinto?</h3>
+    <p>Los arreglos son cómodos pero tienen un problema fundamental: <strong>son estáticos</strong>. Antes de usarlos, hay que decirle a la computadora cuánto espacio reservar. Si pedís poco, te quedás sin lugar. Si pedís mucho, desperdiciás memoria.</p>
+    <p>Además, insertar o borrar un elemento en el medio de un arreglo requiere desplazar todos los elementos de alrededor — una operación costosa.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Imaginá que tenés que poner sillas en una fila para un evento. Con un arreglo, ponés exactamente N sillas pegadas una a la otra. Si viene una persona más, no hay lugar. Si vienen menos, sobran sillas vacías ocupando espacio. <br><br>Con una lista encadenada, cada persona tiene su silla en cualquier parte del salón, y le decís "cuando termines, pasale la palabra a fulano que está en la esquina". Podés agregar o sacar personas sin mover a nadie más.
+    </div>
+
+    <div class="definition">
+      <div class="def-tag">Estructura dinámica</div>
+      Una estructura dinámica puede <strong>crecer y decrecer en tiempo de ejecución</strong>. No reserva un bloque fijo de memoria: toma memoria cuando la necesita y la devuelve cuando no. Los elementos pueden estar en posiciones de memoria no contiguas, conectados entre sí mediante <em>punteros</em>.
+    </div>
+  </div>
+
+  <!-- NODO Y LSE -->
+  <div class="section">
+    <div class="section-label">Lista Simple Encadenada (LSE)</div>
+
+    <h3>¿Qué es un nodo?</h3>
+    <p>La unidad básica de una lista encadenada es el <strong>nodo</strong>. Cada nodo contiene al menos dos cosas: el <em>dato</em> que queremos guardar, y un <em>puntero</em> que indica la dirección del siguiente nodo en la lista.</p>
+
+    <div class="diagram">
+      <div class="d-label">Estructura de un nodo</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="border:2px solid #2a7a4b; padding:12px 24px; background:#f0fff5; font-weight:700; font-size:14px">DATO</td>
+          <td style="border:2px solid #2a7a4b; padding:12px 24px; background:#e8f5e9; font-weight:700; font-size:14px; color:#2a7a4b">PUNTERO →</td>
+        </tr>
+      </table>
+    </div>
+
+    <p>El <strong>puntero del último nodo vale 0</strong> (indica que no hay siguiente). La variable <strong>LIST</strong> contiene la dirección del primer nodo. Si LIST = 0, la lista está vacía.</p>
+
+    <div class="diagram">
+      <div class="d-label">Lista: Diaz → Heredia → Martinez → Paz (fin)</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:13px; overflow-x:auto; white-space:nowrap; padding:8px 0">
+        LIST=3 &nbsp;→&nbsp;
+        [Diaz | 7] &nbsp;→&nbsp;
+        [Heredia | 1] &nbsp;→&nbsp;
+        [Martinez | 5] &nbsp;→&nbsp;
+        [Paz | 0]
+      </div>
+      <div style="font-size:11px; color:#666; margin-top:6px">Los números son direcciones de memoria (no son secuenciales — pueden estar en cualquier posición)</div>
+    </div>
+
+    <h3>GETNODE y RET — las operaciones de memoria</h3>
+    <p>Para manejar memoria dinámica, la materia usa dos operaciones abstractas:</p>
+
+    <div class="grid-2">
+      <div class="box green">
+        <h4>GETNODE(X)</h4>
+        "Dame un nodo libre." Devuelve en X la dirección de un nodo disponible en el espacio libre. Si no hay nodos libres, error. Equivale a un <em>malloc</em> en C.
+      </div>
+      <div class="box green">
+        <h4>RET(X)</h4>
+        "Devolvé este nodo." Libera el nodo en la dirección X, devolviéndolo al espacio disponible. Equivale a un <em>free</em> en C.
+      </div>
+    </div>
+
+    <h3>El Espacio Disponible (DISPO)</h3>
+    <p>Los nodos libres no desaparecen — se guardan encadenados en una lista especial llamada <strong>espacio disponible</strong>, accedida por el puntero <span class="inline-code">DISPO</span>. Esta lista funciona como una pila: GETNODE saca el primer nodo disponible, RET devuelve un nodo al principio.</p>
+
+    <div class="codeblock"><span class="cm">// Inicializar el espacio disponible con n nodos</span>
+<span class="fn">PROC INICIALIZAR</span>(n)
+    <span class="kw">desde</span> i = 1 <span class="kw">hasta</span> n-1
+        P(i) = i + 1       <span class="cm">// cada nodo apunta al siguiente</span>
+    <span class="kw">finDesde</span>
+    P(n) = 0               <span class="cm">// el último apunta a nada</span>
+    DISPO = 1              <span class="cm">// DISPO apunta al primero libre</span>
+<span class="fn">finProc</span></div>
+
+    <h3>Crear una lista encadenada</h3>
+    <div class="codeblock"><span class="cm">// Crear lista con dos nodos "MAT" y "PAT". T apunta al inicio.</span>
+<span class="fn">PROC CREAR</span>(T)
+    llamar GETNODE(X)
+    T = X
+    DATO(X) = "MAT"
+    P(X) = 0               <span class="cm">// por ahora es el único nodo</span>
+
+    llamar GETNODE(X)      <span class="cm">// pedimos otro nodo</span>
+    P(T) = X               <span class="cm">// el primer nodo apunta al nuevo</span>
+    DATO(X) = "PAT"
+    P(X) = 0               <span class="cm">// "PAT" es el último</span>
+<span class="fn">finProc</span></div>
+
+    <h3>Agregar un nodo después del nodo X</h3>
+    <p>Para insertar entre dos nodos, solo hay que cambiar punteros. No se mueve ningún otro elemento.</p>
+    <div class="codeblock"><span class="fn">PROC AGREGAR</span>(T, X)
+    llamar GETNODE(I)       <span class="cm">// pedimos un nodo nuevo</span>
+    DATO(I) = nuevoDato
+
+    <span class="kw">si</span> T = 0 <span class="kw">entonces</span>         <span class="cm">// lista vacía: el nuevo es el único</span>
+        T = I
+        P(T) = 0
+    <span class="kw">sino</span>
+        P(I) = P(X)         <span class="cm">// el nuevo apunta a quien seguía a X</span>
+        P(X) = I            <span class="cm">// X ahora apunta al nuevo</span>
+    <span class="kw">finSi</span>
+<span class="fn">finProc</span></div>
+
+    <h3>Eliminar el nodo X (Y = nodo anterior a X)</h3>
+    <p>Para eliminar, simplemente "saltamos" el nodo X haciendo que el anterior apunte al siguiente. Luego devolvemos X a DISPO.</p>
+    <div class="codeblock"><span class="fn">PROC ELIMINAR</span>(T, X, Y)
+    <span class="cm">// Y = 0 significa que X es el primer nodo</span>
+    <span class="kw">si</span> Y = 0 <span class="kw">entonces</span>
+        T = P(T)            <span class="cm">// el inicio de la lista es ahora el segundo nodo</span>
+    <span class="kw">sino</span>
+        P(Y) = P(X)         <span class="cm">// el anterior de X ahora apunta al siguiente de X</span>
+    <span class="kw">finSi</span>
+    llamar RET(X)           <span class="cm">// devolvemos el nodo al espacio disponible</span>
+<span class="fn">finProc</span></div>
+
+    <h3>Agregar manteniendo orden</h3>
+    <p>Recorremos la lista con dos punteros: <strong>p</strong> (nodo actual) y <strong>q</strong> (nodo anterior). Avanzamos mientras el dato del nodo actual sea menor que el nuevo dato. Insertamos entre q y p.</p>
+    <div class="codeblock"><span class="fn">PROC AGREGAR_ORDENADO</span>(LIST)
+    llamar GETNODE(x)
+    Leer(I), DATO(x) = I
+    q = 0, p = LIST
+
+    <span class="kw">Mientras</span> p ≠ 0 <span class="kw">y</span> DATO(p) &lt; I <span class="kw">hacer</span>
+        q = p
+        p = P(p)
+    <span class="kw">finMientras</span>
+
+    <span class="kw">si</span> p = LIST <span class="kw">entonces</span>       <span class="cm">// insertar al principio</span>
+        LIST = x
+    <span class="kw">sino</span>
+        P(q) = x            <span class="cm">// el anterior ahora apunta al nuevo</span>
+    <span class="kw">finSi</span>
+    P(x) = p                <span class="cm">// el nuevo apunta al que sigue</span>
+<span class="fn">finProc</span></div>
+  </div>
+
+  <!-- PILAS Y COLAS ENCADENADAS -->
+  <div class="section">
+    <div class="section-label">Pilas y Colas sobre LSE</div>
+
+    <h3>¿Para qué representarlas como listas encadenadas?</h3>
+    <p>Ventaja principal: <strong>no tienen límite fijo de tamaño</strong>. Una pila en arreglo tiene capacidad n y tira overflow si querés meter más. Una pila encadenada solo está limitada por la memoria disponible del sistema.</p>
+
+    <div class="grid-2">
+      <div class="box green">
+        <h4>Pila Encadenada — AGREGAR</h4>
+        <div class="codeblock" style="font-size:12px; padding:12px">llamar GETNODE(y)
+DATO(y) = x
+P(y) = tope      <span class="cm">// apunta al anterior tope</span>
+tope = y         <span class="cm">// el nuevo es el tope</span></div>
+      </div>
+      <div class="box green">
+        <h4>Pila Encadenada — ELIMINAR</h4>
+        <div class="codeblock" style="font-size:12px; padding:12px"><span class="kw">si</span> tope = 0: ERROR, retornar
+x = DATO(tope)
+y = tope
+tope = P(tope)   <span class="cm">// tope baja</span>
+llamar RET(y)</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div class="box green">
+        <h4>Cola Encadenada — AGREGAR (R=rear, F=front)</h4>
+        <div class="codeblock" style="font-size:12px; padding:12px">llamar GETNODE(y)
+DATO(y) = x, P(y) = 0
+<span class="kw">si</span> F = 0 <span class="kw">entonces</span>    <span class="cm">// cola vacía</span>
+    F = R = y
+<span class="kw">sino</span>
+    P(R) = y
+    R = y</div>
+      </div>
+      <div class="box green">
+        <h4>Cola Encadenada — ELIMINAR</h4>
+        <div class="codeblock" style="font-size:12px; padding:12px"><span class="kw">si</span> F = 0: ERROR, retornar
+y = F
+F = P(y)
+x = DATO(y)
+llamar RET(y)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTAS CIRCULARES -->
+  <div class="section">
+    <div class="section-label">Listas Circulares</div>
+
+    <h3>¿Qué las hace circulares?</h3>
+    <p>En una lista circular, el <strong>último nodo no apunta a 0</strong> sino que apunta de vuelta al primer nodo (o al nodo cabecera). Esto forma un "anillo" cerrado sin principio ni fin.</p>
+
+    <div class="analogy">
+      <div class="analogy-tag">Analogía</div>
+      Una cadena circular de personas tomadas de la mano. No hay un primero ni un último — podés recorrerla indefinidamente en cualquier dirección partiendo desde cualquier punto.
+    </div>
+
+    <h3>Nodo Cabecera</h3>
+    <p>En listas circulares se usa un <strong>nodo cabecera</strong>: un nodo ficticio que siempre está presente aunque la lista esté "vacía". Su campo de dato generalmente se marca con un símbolo especial (*).</p>
+    <p>Ventaja: <strong>la lista nunca queda sin nodos</strong>, lo que simplifica los algoritmos de inserción y borrado (no hay que tratar el caso especial de lista vacía).</p>
+
+    <div class="key">
+      <div class="key-tag">Condición de lista circular vacía</div>
+      La lista tiene solo el nodo cabecera, que apunta a sí mismo: <span class="inline-code">T = P(T)</span>. En una LSE simple, vacía significa <span class="inline-code">LIST = 0</span>.
+    </div>
+  </div>
+
+  <!-- LDE -->
+  <div class="section">
+    <div class="section-label">Lista Doble Encadenada (LDE)</div>
+
+    <h3>¿Para qué dos punteros?</h3>
+    <p>En una LSE, para borrar el nodo X necesitás el nodo anterior (Y) — porque si no sabés quién apunta a X, no podés cambiar ese puntero. Esto requiere siempre recorrer desde el principio o mantener un puntero auxiliar.</p>
+    <p>La LDE resuelve esto dando a <strong>cada nodo dos punteros</strong>: uno al siguiente (<span class="inline-code">PS</span>) y uno al anterior (<span class="inline-code">PA</span>). Desde cualquier nodo podés ir en ambas direcciones.</p>
+
+    <div class="diagram">
+      <div class="d-label">Nodo de LDE</div>
+      <table style="margin:0 auto; border:none; width:auto">
+        <tr>
+          <td style="border:2px solid #2a7a4b; padding:10px 18px; background:#e8f5e9; font-weight:700; color:#2a7a4b">← PA</td>
+          <td style="border:2px solid #2a7a4b; padding:10px 18px; background:#f0fff5; font-weight:700">DATO</td>
+          <td style="border:2px solid #2a7a4b; padding:10px 18px; background:#e8f5e9; font-weight:700; color:#2a7a4b">PS →</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="key">
+      <div class="key-tag">Propiedad fundamental</div>
+      <span class="inline-code">PS(PA(x)) = x</span> y <span class="inline-code">PA(PS(x)) = x</span> — si avanzás y después retrocedés (o viceversa), volvés al mismo nodo. Esto verifica que los punteros son consistentes.
+    </div>
+
+    <h3>LDE Circular con Nodo Cabecera</h3>
+    <p>Es la forma más común en la práctica. Combina las ventajas de circular (nunca vacía del todo) con las de doble (navegación en ambos sentidos). La lista vacía tiene solo la cabecera, con PS y PA apuntando a sí misma.</p>
+
+    <h3>AGREGAR después del nodo X</h3>
+    <div class="codeblock"><span class="fn">PROC AGREG-1</span>(X, P, L)
+    <span class="kw">si</span> L = 0 <span class="kw">entonces</span>              <span class="cm">// lista vacía</span>
+        PA(p) = PS(p) = 0
+        L = p
+    <span class="kw">sino</span>
+        PA(p) = x              <span class="cm">// el nuevo apunta atrás a X</span>
+        PS(p) = PS(x)          <span class="cm">// el nuevo apunta adelante al que seguía a X</span>
+        PS(x) = p              <span class="cm">// X ahora apunta al nuevo</span>
+        PA(PS(p)) = p          <span class="cm">// el que seguía ahora apunta atrás al nuevo</span>
+    <span class="kw">finSi</span>
+<span class="fn">finProc</span></div>
+
+    <h3>ELIMINAR nodo X</h3>
+    <div class="codeblock"><span class="fn">PROC ELIMINAR</span>(L, X)
+    <span class="kw">si</span> x = L <span class="kw">entonces</span>             <span class="cm">// era el único nodo</span>
+        L = 0
+    <span class="kw">sino</span>
+        <span class="kw">si</span> PS(x) ≠ 0 <span class="kw">entonces</span>
+            PA(PS(x)) = PA(x)  <span class="cm">// el siguiente de X ahora apunta atrás al anterior de X</span>
+        <span class="kw">finSi</span>
+        PS(PA(x)) = PS(x)      <span class="cm">// el anterior de X ahora apunta adelante al siguiente de X</span>
+    <span class="kw">finSi</span>
+    llamar RET(X)
+<span class="fn">finProc</span></div>
+  </div>
+
+  <!-- LISTAS GENERALIZADAS -->
+  <div class="section">
+    <div class="section-label">Listas Generalizadas</div>
+
+    <h3>¿Qué es una lista generalizada?</h3>
+    <p>Una lista generalizada es una lista donde los elementos pueden ser <strong>átomos</strong> (valores simples, como un número o letra) o <strong>sublistas</strong> (otras listas). Es una estructura recursiva: una lista puede contener otras listas que a su vez contienen otras listas.</p>
+
+    <div class="definition">
+      <div class="def-tag">Ejemplo</div>
+      <span class="inline-code">M = (a, (b, c), (d, e), f)</span><br><br>
+      M tiene 4 elementos: el átomo <em>a</em>, la sublista <em>(b,c)</em>, la sublista <em>(d,e)</em>, y el átomo <em>f</em>.
+    </div>
+
+    <h3>Propiedades de una lista generalizada</h3>
+    <ul>
+      <li><strong>Longitud:</strong> cantidad de elementos <em>directos</em> en el nivel principal (independientemente de si son átomos o sublistas). Para M de arriba, longitud = 4.</li>
+      <li><strong>Profundidad:</strong> máximo nivel de anidamiento. La lista principal tiene nivel 1. Cada sublista que convoca tiene nivel = nivel del padre + 1. La profundidad es el nivel máximo alcanzado. Para M: profundidad = 2.</li>
+      <li><strong>Contador de referencia:</strong> cuántas otras listas apuntan a esta lista (relevante cuando varias listas comparten una misma sublista).</li>
+    </ul>
+
+    <h3>Estructura del nodo generalizado</h3>
+    <p>Cada nodo tiene tres campos: <strong>TAG</strong>, <strong>DATO/DIR</strong>, y <strong>PUNTERO</strong>.</p>
+
+    <div class="grid-2">
+      <div class="box green">
+        <h4>TAG = 0 → Átomo</h4>
+        <div class="diagram" style="margin:8px 0; text-align:left">
+          <code>[TAG=0 | DATO | PUNTERO]</code>
+        </div>
+        DATO contiene el valor del átomo. PUNTERO apunta al siguiente elemento de la lista padre.
+      </div>
+      <div class="box green">
+        <h4>TAG = 1 → Sublista</h4>
+        <div class="diagram" style="margin:8px 0; text-align:left">
+          <code>[TAG=1 | DIR_CABECERA | PUNTERO]</code>
+        </div>
+        DATO contiene la dirección de la cabecera de la sublista. PUNTERO apunta al siguiente elemento de la lista padre.
+      </div>
+    </div>
+
+    <div class="warn">
+      <div class="warn-tag">Importante — Contador de referencia</div>
+      Si dos listas apuntan a la misma sublista, y borrás una de ellas, la sublista <strong>no debe liberarse</strong> porque la otra lista todavía la necesita. El contador de referencia dice cuántas listas apuntan a esta. Solo se libera cuando ese contador llega a 0.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     RESUMEN FINAL
+══════════════════════════════════════════════ -->
+<div class="unit" id="final">
+  <div class="unit-header" style="background:#1a1a2e;">
+    <div class="label" style="color:#f0a500">Para el examen</div>
+    <h2>Resumen y diferencias clave</h2>
+    <p>Lo que más confunde y lo que más se pregunta.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-label" style="color:#1a1a2e">Comparativa de estructuras</div>
+
+    <h3>¿Cuándo usar cada estructura?</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Estructura</th><th>Política de acceso</th><th>Memoria</th><th>Mejor para...</th></tr>
+        <tr>
+          <td><strong>Arreglo</strong></td>
+          <td>Acceso directo por índice</td>
+          <td>Estática, contigua</td>
+          <td>Acceso frecuente por posición, tamaño conocido</td>
+        </tr>
+        <tr>
+          <td><strong>Pila</strong></td>
+          <td>LIFO — solo el tope</td>
+          <td>Estática (arreglo) o dinámica (lista)</td>
+          <td>Recursión, retroceso, evaluación de expresiones</td>
+        </tr>
+        <tr>
+          <td><strong>Cola</strong></td>
+          <td>FIFO — frente y final</td>
+          <td>Estática o dinámica</td>
+          <td>Procesos por orden de llegada, impresión, scheduling</td>
+        </tr>
+        <tr>
+          <td><strong>LSE</strong></td>
+          <td>Secuencial, un sentido</td>
+          <td>Dinámica, no contigua</td>
+          <td>Inserciones/borrados frecuentes, tamaño variable</td>
+        </tr>
+        <tr>
+          <td><strong>LDE</strong></td>
+          <td>Secuencial, dos sentidos</td>
+          <td>Dinámica, no contigua</td>
+          <td>Recorrido bidireccional, borrado eficiente</td>
+        </tr>
+        <tr>
+          <td><strong>Lista Circular</strong></td>
+          <td>Sin inicio ni fin fijo</td>
+          <td>Dinámica</td>
+          <td>Procesos cíclicos, round-robin</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Las confusiones más comunes</h3>
+
+    <div class="warn">
+      <div class="warn-tag">Confusión 1 — Pila vs Cola</div>
+      En la <strong>Pila</strong>: entrar y salir por el <em>mismo</em> extremo (el tope). En la <strong>Cola</strong>: entrar por un extremo (rear) y salir por el <em>opuesto</em> (front). La variable <span class="inline-code">tope</span> es exclusiva de la pila. Las variables <span class="inline-code">front</span> y <span class="inline-code">rear</span> son exclusivas de la cola.
+    </div>
+
+    <div class="warn">
+      <div class="warn-tag">Confusión 2 — Cola simple vs Cola circular</div>
+      En la <strong>cola simple</strong>, front y rear solo avanzan hacia adelante. El espacio liberado al sacar elementos nunca se reutiliza. En la <strong>cola circular</strong>, se usa <span class="inline-code">mod n</span> para que los punteros "den la vuelta". La condición de vacía es siempre <span class="inline-code">front = rear</span>. La de llena en circular es <span class="inline-code">(rear+1) mod n = front</span>.
+    </div>
+
+    <div class="warn">
+      <div class="warn-tag">Confusión 3 — LSE vacía vs Lista Circular vacía</div>
+      <strong>LSE vacía:</strong> <span class="inline-code">LIST = 0</span>. <strong>Lista circular vacía con cabecera:</strong> <span class="inline-code">T = P(T)</span> — la cabecera apunta a sí misma. La diferencia es que la circular nunca queda "sin nodos" porque siempre tiene la cabecera.
+    </div>
+
+    <div class="warn">
+      <div class="warn-tag">Confusión 4 — Estática vs Dinámica</div>
+      <strong>Estática</strong> = arreglo = tamaño fijo = posiciones contiguas en memoria = se define al escribir el programa. <strong>Dinámica</strong> = lista encadenada = crece/decrece en ejecución = posiciones NO contiguas = se conecta con punteros. Las pilas y colas pueden implementarse de ambas formas — la diferencia es si usás arreglo o lista como base.
+    </div>
+
+    <div class="key">
+      <div class="key-tag">Para repasar rápido</div>
+      <ul>
+        <li>Arreglo: <strong>(índice, valor)</strong>. Dirección = α + (i-1). Estático.</li>
+        <li>Pila: <strong>LIFO</strong>. Variable: <strong>tope</strong>. Llena: tope=n. Vacía: tope=0.</li>
+        <li>Cola: <strong>FIFO</strong>. Variables: <strong>front, rear</strong>. Vacía: front=rear. Circular usa <strong>mod n</strong>.</li>
+        <li>Expresiones: tabla PP/PE. Operando → imprime. Operador → compara PP/PE. ")" → vacía hasta "(". Fin → vacía todo.</li>
+        <li>LSE: nodo = [DATO | PUNTERO]. LIST apunta al primero. DISPO maneja nodos libres. GETNODE pide, RET devuelve.</li>
+        <li>LDE: nodo = [PA | DATO | PS]. Permite ir en ambas direcciones. <strong>PS(PA(x)) = x</strong>.</li>
+        <li>Circular vacía: <strong>T = P(T)</strong>. Circular tiene nodo cabecera siempre.</li>
+        <li>Lista generalizada: TAG=0 átomo, TAG=1 sublista. Longitud = elementos directos. Profundidad = nivel máximo.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Estructura de Datos I · UNSTA Facultad de Ingeniería · Buena suerte en el examen 💪
+</div>
+
+</body>
+</html>
